@@ -1,32 +1,32 @@
-import { Observable, Subscription } from "rxjs";
-import { share } from "rxjs/operators";
-// this is just one of a thousand ways to create an observable
-var observable: Observable<any> = Observable.create((observer: any) => {
-    try {
-        let i: number = 1;
-        observer.next("Hey guys!");
-        observer.next("How are you?");
-        setInterval(() => {
-            observer.next("I'm good!" + i++);
-        }, 2000);
-    } catch (err) {
-        observer.error(err);
-    }
-});//.pipe(share());
+import { Subject, Subscription } from "rxjs";
 
-var subscription1: Subscription = observable.subscribe(
-    (x: any) => addItem("Subscriber 1:" + x),
-    (error: any) => addItem(error),
-    () => addItem("completed")
+/***
+ * Subject is an observable that is also able to emit a value
+ */
+var subject1: Subject<any> = new Subject();
+
+subject1.subscribe(
+    data => addItem("Observer1:" + data),
+    err => addItem(err),
+    () => addItem("Observer1 completed")
 );
 
-setTimeout(() => {
-    var subscription2: Subscription = observable.subscribe(
-        (x: any) => {
-            addItem("Subscriber 2:" + x);
-        }
-    );
-}, 2000);
+subject1.next("The first thing has been sent");
+
+/**
+ * observer2 will not receive first thing as it is created 
+ * after the first thing was sent.
+ */
+var observer2: Subscription = subject1.subscribe(
+    data => addItem("Observer2:" + data)
+);
+
+subject1.next("The second thing has been sent");
+subject1.next("A third thing has been sent");
+
+observer2.unsubscribe();
+
+subject1.next("A final thing has been sent");
 
 function addItem(val: any): void {
     var node: HTMLLIElement = document.createElement("li");
