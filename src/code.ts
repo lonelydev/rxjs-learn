@@ -1,22 +1,27 @@
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 
 // this is just one of a thousand ways to create an observable
 var observable: Observable<string> = Observable.create((observer: any) => {
     try {
         observer.next("Hey guys!");
         observer.next("How are you?");
-        observer.complete();
-        observer.next("This will never be sent.");
+        setInterval(() => {
+            observer.next("I'm good!");
+        }, 2000);
     } catch (err) {
         observer.error(err);
     }
 });
 
-observable.subscribe(
+var observer: Subscription = observable.subscribe(
     (x: any) => addItem(x),
     (error: any) => addItem(error),
     () => addItem("completed")
 );
+
+setTimeout(()=> {
+    observer.unsubscribe();
+}, 6001);
 
 function addItem(val: any): void {
     var node: HTMLLIElement = document.createElement("li");
