@@ -23,6 +23,13 @@ var subscription2: Subscription = observable.subscribe(
     (x: any) => addItem(x)
 );
 
+/**
+ * what if you want to unsubscribe both subscriptions when one has been unsubscribed?
+ * cool right?
+ * welcome to Child subscriptions.
+ */
+subscription1.add(subscription2);
+
 setTimeout(()=> {
     subscription1.unsubscribe();
 }, 6001);
