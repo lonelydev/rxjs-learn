@@ -1,38 +1,32 @@
 import { Observable, Subscription } from "rxjs";
-
+import { share } from "rxjs/operators";
 // this is just one of a thousand ways to create an observable
-var observable: Observable<string> = Observable.create((observer: any) => {
+var observable: Observable<any> = Observable.create((observer: any) => {
     try {
+        let i: number = 1;
         observer.next("Hey guys!");
         observer.next("How are you?");
         setInterval(() => {
-            observer.next("I'm good!");
+            observer.next("I'm good!" + i++);
         }, 2000);
     } catch (err) {
         observer.error(err);
     }
-});
+});//.pipe(share());
 
 var subscription1: Subscription = observable.subscribe(
-    (x: any) => addItem(x),
+    (x: any) => addItem("Subscriber 1:" + x),
     (error: any) => addItem(error),
     () => addItem("completed")
 );
 
-var subscription2: Subscription = observable.subscribe(
-    (x: any) => addItem(x)
-);
-
-/**
- * what if you want to unsubscribe both subscriptions when one has been unsubscribed?
- * cool right?
- * welcome to Child subscriptions.
- */
-subscription1.add(subscription2);
-
-setTimeout(()=> {
-    subscription1.unsubscribe();
-}, 6001);
+setTimeout(() => {
+    var subscription2: Subscription = observable.subscribe(
+        (x: any) => {
+            addItem("Subscriber 2:" + x);
+        }
+    );
+}, 2000);
 
 function addItem(val: any): void {
     var node: HTMLLIElement = document.createElement("li");
