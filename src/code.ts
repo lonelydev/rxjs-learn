@@ -1,3 +1,6 @@
-import {Observable} from "rxjs";
+import { Observable } from "rxjs";
 
-console.log(Observable);
+// this is just one of a thousand ways to create an observable
+var observable = Observable.create(function subscribe(observer:any){
+    observer.next("Hey guys!");
+});
