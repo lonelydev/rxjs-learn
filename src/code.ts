@@ -2,8 +2,9 @@ import { ReplaySubject, Subscription } from "rxjs";
 
 /***
  * Subject is an observable that is also able to emit a value
+ * Replay maximum 30 events in 200 milliseconds
  */
-var subject1: ReplaySubject<any> = new ReplaySubject(2);
+var subject1: ReplaySubject<any> = new ReplaySubject(30, 200);
 
 subject1.subscribe(
     data => addItem("1:" + data),
@@ -11,23 +12,14 @@ subject1.subscribe(
     () => addItem("1 completed")
 );
 
-subject1.next("The first thing has been sent");
-subject1.next("The second thing has been sent");
-subject1.next("... 2 is about to subscribe.");
-/**
- * observer2 will not receive first thing as it is created 
- * after the first thing was sent.
- */
-var observer2: Subscription = subject1.subscribe(
-    data => addItem("Observer2:" + data)
-);
+let seed: number = 1;
+var intNumber: number = setInterval(() => subject1.next(seed++), 100);
 
-subject1.next("The second thing has been sent");
-subject1.next("A third thing has been sent");
-
-observer2.unsubscribe();
-
-subject1.next("A final thing has been sent");
+setTimeout(() => {
+    var observer2: Subscription = subject1.subscribe(
+        data => addItem("2:" + data)
+    );
+}, 600);
 
 function addItem(val: any): void {
     var node: HTMLLIElement = document.createElement("li");
