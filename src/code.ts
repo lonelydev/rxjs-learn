@@ -1,18 +1,19 @@
-import { BehaviorSubject, Subscription } from "rxjs";
+import { ReplaySubject, Subscription } from "rxjs";
 
 /***
  * Subject is an observable that is also able to emit a value
  */
-var subject1: BehaviorSubject<any> = new BehaviorSubject("First");
+var subject1: ReplaySubject<any> = new ReplaySubject(2);
 
 subject1.subscribe(
-    data => addItem("Observer1:" + data),
+    data => addItem("1:" + data),
     err => addItem(err),
-    () => addItem("Observer1 completed")
+    () => addItem("1 completed")
 );
 
 subject1.next("The first thing has been sent");
-subject1.next("...Observer 2 is about to subscribe.");
+subject1.next("The second thing has been sent");
+subject1.next("... 2 is about to subscribe.");
 /**
  * observer2 will not receive first thing as it is created 
  * after the first thing was sent.
