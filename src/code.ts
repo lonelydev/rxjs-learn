@@ -1,10 +1,10 @@
-import { ReplaySubject, Subscription } from "rxjs";
+import { AsyncSubject, Subscription } from "rxjs";
 
 /***
  * Subject is an observable that is also able to emit a value
  * Replay maximum 30 events in 200 milliseconds
  */
-var subject1: ReplaySubject<any> = new ReplaySubject(30, 200);
+var subject1: AsyncSubject<any> = new AsyncSubject();
 
 subject1.subscribe(
     data => addItem("1:" + data),
@@ -19,6 +19,7 @@ setTimeout(() => {
     var observer2: Subscription = subject1.subscribe(
         data => addItem("2:" + data)
     );
+    subject1.complete();
 }, 600);
 
 function addItem(val: any): void {
